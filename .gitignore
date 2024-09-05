@@ -1,0 +1,4 @@
+terraform/
+Jenkins/
+*.log  # Exclude log files
+

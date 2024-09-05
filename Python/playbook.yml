@@ -1,0 +1,30 @@
+---
+- name: "Automate Docker Build using Ansible"
+  hosts: localhost
+  tasks:
+
+  - name: Stop running container
+    command: docker stop django-container
+    ignore_errors: yes
+
+  - name: Remove stopped container
+    command: docker rm django-container
+    ignore_errors: yes
+
+  - name: Remove used image
+    command: docker rmi reemaboabkr/survey-app-img
+    ignore_errors: yes
+
+  - name: Build new image
+    command: docker build -t reemaboabkr/survey-app-img .
+
+  - name: Push Docker image
+    command: docker push reemaboabkr/survey-app-img
+
+  - name: Run new container
+    command: docker run --name django-container -p 4000:8005 reemaboabkr/survey-app-img
+
+  - name: Run migration inside container
+    command: docker exec -it django-container sh -c "python3 manage.py makemigrations && python3 manage.py migrate"
+
+
