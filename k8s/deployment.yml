@@ -20,5 +20,3 @@ spec:
         image: reemaboabkr/survey-app-img
         ports:
         - containerPort: 8005
-
-        
