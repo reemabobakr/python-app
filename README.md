@@ -17,10 +17,11 @@ This project is a survey application built using Python. The application is cont
         ansible-playbook playbook.yml
 3. **Create a namespace in Kubernetes**:
      kubectl create namespace python-app
-4. **Deploy the application on Kubernetes and create the service**:
+4. **Deploy the application on Kubernetes**:
       kubectl -n python-app apply -f deployment.yaml
-      kubectl -n python-app apply -f services.yaml
-5. **Access the application**:
+5. **Create the service for the application** 
+      kubectl -n python-app apply -f services.yaml     
+6. **Access the application**:
      Get the URL to access the service:
         minikube service -n python-app survey-app --url
 
