@@ -1,59 +1,41 @@
-# Deploy Python App on K8s Cluster Using Jenkins Pipeline
+# Survey Python Application
 
-This project is to build Jenkins EC2 on AWS and use Jenkins to run our Jenkinsfile to deploy our python application
+## Overview
+This project is a survey application built using Python. The application is containerized using Docker, allowing for easy deployment and scaling. The Docker image is pushed to Docker Hub and managed using Kubernetes for orchestration.
 
-## Step 1: Jenkins EC2:
+## Prerequisites
+- Docker installed on your machine
+- Kubernetes cluster (Minikube recommended)
+- Ansible installed on your machine
 
-`NOTE: Make sure you have terraform installed, create terraform.tfvars file with the variables (ec2-ami, region & your public ssh key) then do the following:`
+## Installation Instructions
+1. **Clone the repository**:
+   git clone https://github.com/reemabobakr/python-app
 
-```
-cd terraform
+2. **Run the Ansible playbook to automate the Docker image build and push process**:  
+    Ensure you have the Ansible file ready and run:
+        ansible-playbook playbook.yml
+3. **Create a namespace in Kubernetes**:
+     kubectl create namespace python-app
+4. **Deploy the application on Kubernetes and create the service**:
+      kubectl -n python-app apply -f deployment.yaml
+      kubectl -n python-app apply -f services.yaml
+5. **Access the application**:
+     Get the URL to access the service:
+        minikube service -n python-app survey-app --url
 
-terraform init
+## Features
+- Containerized using Docker for easy deployment and scaling.
+- Managed through Kubernetes for orchestration.
+- Automated build and deployment process using Ansible.
 
-terraform apply -auto-approve
-```
+## Ansible Automation
+ The Ansible playbook automates the following tasks:
 
-## Step 2: Prerequisites:
+- Stop and remove any existing Docker containers.
+- Remove the existing Docker image.
+- Build a new Docker image from the Dockerfile.
+- Push the newly built Docker image to Docker Hub.
+- Run the new container and perform necessary migrations.
 
-`NOTE: replace the public-ip with the` **instance_public_ip** `that will showup in terraform output`
-
-```
-ssh ubuntu@public-ip
-
-vim install.sh
-
-chmod +x install.sh
-
-./install.sh
-```
-
-## Step 3: Setup Jenkins:
-
-1. Navigate to **Manage Jenkins** >> **Manage Plugins** >> **Available tab** >> search for **CloudBees AWS Credentials** >> **Install without Restart**
-
-2. Navigate to **Manage Jenkins** >> **Manage Credentials** >> **global** >> **Global Credentials** >> **Add Credentials**
-
-3. Add AWS Credentials, repeat step 2 again to add Github credentials
-
-## Step 4: Create Jenkins Pipeline:
-
-1. Navigate to **Dashboard** >> **Create a Job**
-
-2. Give it a name >> Choose Pipeline
-
-3. **Pipeline** Tab >> Choose **Pipeline Script from SCM** >> Choose **Git** >> Add **Repository URL** >> Add **Credentails** >> Specify the **Branch** >> Then the **Jenkinsfile** path inside the repository
-
-4. Run the created job >> Create 2 similar jobs that navigate to **Jenkins-Deploy/Jenkinsfile** that will run automatically after Job one is done and **Jenkins-RM-EKS/Jenkinsfile** that you will use to remove your cluster
-
-## Step 5: Access your application:
-
-`Note: After the 2nd Jenkins job run and the application is deployed`
-
-Navigate to the 2nd job >> **Console Output** >> Get your **Application URL** which you will found in the end next to **DNSNAME**.
-
-It should look something like this (use the application port to access your app, we used here port _8000_ ):
-
-```
-a0e6e955cb648xxxxxxxxxxxx-xxxxxx025.REGION.elb.amazonaws.com:8000
-```
+        
